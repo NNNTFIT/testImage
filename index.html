@@ -11,37 +11,41 @@
   <img id="preview" style="max-width:300px;" />
 
   <script type="module">
-  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
 
-  // Thay bằng URL project của bạn (lấy trong Supabase Dashboard → Settings → API)
-  const supabaseUrl = "https://jfuqlboofxijjkaawslw.supabase.co/rest/v1/"
+    // Thay bằng URL project của bạn (lấy trong Supabase Dashboard → Settings → API)
+    const supabaseUrl = "https://jfuqlboofxijjkaawslw.supabase.co"
 
-  // Đây chính là key bạn đưa
-  const supabaseKey = "sb_publishable_7JiKHmLhM3ZQrY60FqTP4w_JP_SuZvW"
+    // Đây chính là key bạn đưa
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmdXFsYm9vZnhpamprYWF3c2x3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzOTMxMTIsImV4cCI6MjEwNjk2OTExMn0.S83Po1qpyvSSKb-zOf3F6ZpaIiBTmOSUQuVBYN2TFmw"
 
-  // Tạo client để kết nối Supabase
-  const supabase = createClient(supabaseUrl, supabaseKey)
+    // Tạo client để kết nối Supabase
+    const supabase = createClient(supabaseUrl, supabaseKey)
 
-  // Ví dụ: upload ảnh
-  document.getElementById("fileInput").addEventListener("change", async (e) => {
-    const file = e.target.files[0]
-    const fileName = Date.now() + "-" + file.name
+    // Upload ảnh khi chọn file
+    document.getElementById("fileInput").addEventListener("change", async (e) => {
+      const file = e.target.files[0]
+      if (!file) return
 
-    const { error } = await supabase.storage
-      .from("images") // tên bucket bạn tạo
-      .upload(fileName, file)
+      const fileName = Date.now() + "-" + file.name
 
-    if (error) {
-      console.error("Upload lỗi:", error)
-      return
-    }
+      const { error } = await supabase.storage
+        .from("images") // tên bucket bạn tạo
+        .upload(fileName, file)
 
-    const { data } = supabase.storage
-      .from("images")
-      .getPublicUrl(fileName)
+      if (error) {
+        console.error("Upload lỗi:", error)
+        alert("Upload thất bại: " + error.message)
+        return
+      }
 
-    document.getElementById("preview").src = data.publicUrl
-    console.log("Ảnh công khai:", data.publicUrl)
+      const { data } = supabase.storage
+        .from("images")
+        .getPublicUrl(fileName)
+
+      document.getElementById("preview").src = data.publicUrl
+      console.log("Ảnh công khai:", data.publicUrl)
+    })
   </script>
 </body>
 </html>
